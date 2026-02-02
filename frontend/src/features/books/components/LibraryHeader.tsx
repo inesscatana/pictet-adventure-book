@@ -3,7 +3,7 @@ import { Icon } from "../../../ui/Icon";
 export function LibraryHeader() {
     return (
         <div className="text-center">
-            <h2 className="text-4xl font-extrabold" style={{ fontFamily: "Georgia, serif" }}>
+            <h2 className="text-4xl font-extrabold">
                 <Icon name="book" label="Library" className="mr-2" />
                 The Adventure Library
             </h2>

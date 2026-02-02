@@ -10,6 +10,7 @@ body {
   margin: 0;
   background: #fbf7f2;
   color: #2b1f17;
+  font-family: "Georgia", serif;
 
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;

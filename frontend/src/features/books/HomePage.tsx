@@ -25,7 +25,7 @@ export function HomePage() {
     const errorMessage = (error as Error)?.message ?? "Error loading books";
 
     return (
-        <div className="min-h-screen bg-[#fbf7f2] text-[#2b1f17]">
+        <div className="min-h-screen text-[#2b1f17]">
             <HeroSection bookCount={books.length} />
             <LibrarySection
                 search={search}

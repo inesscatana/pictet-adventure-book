@@ -13,7 +13,7 @@ export function HeroSection({ bookCount }: { bookCount: number }) {
                 }}
             >
                 <div className="mx-auto max-w-6xl px-4 text-center text-white/95">
-                    <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight" style={{ fontFamily: "Georgia, serif" }}>
+                    <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight">
                         <Icon name="sparkling" label="Sparkles" className="mr-2" />
                         Adventure Awaits
                         <Icon name="sparkling" label="Sparkles" className="ml-2" />
