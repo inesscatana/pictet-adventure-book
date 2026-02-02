@@ -1,3 +1,5 @@
+import type { BookSummary } from "./types";
+
 export const difficultyLabelMap = {
     easy: "Easy",
     medium: "Medium",
@@ -23,4 +25,37 @@ export function toTitleCase(value: string) {
         .split(" ")
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(" ");
+}
+
+export const FILTER_PREFERRED_ORDER = [
+    "Fantasy",
+    "Adventure",
+    "High Fantasy",
+    "Steampunk Mystery",
+    "Easy",
+    "Medium",
+    "Hard",
+] as const;
+
+export function matchesFilters(book: BookSummary, filters: string[]): boolean {
+    if (filters.length === 0) return true;
+
+    return filters.every((f) => {
+        const fl = f.toLowerCase();
+        return (
+            book.type.toLowerCase() === fl ||
+            book.difficulty.toLowerCase() === fl
+        );
+    });
+}
+
+export function matchesSearch(book: BookSummary, query: string): boolean {
+    const q = query.trim().toLowerCase();
+    if (!q) return true;
+
+    return (
+        book.title.toLowerCase().includes(q) ||
+        book.author.toLowerCase().includes(q) ||
+        book.summary.toLowerCase().includes(q)
+    );
 }
