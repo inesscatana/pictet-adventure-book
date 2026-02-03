@@ -12,7 +12,7 @@ export function getInitialSection(sections: Section[]): Section | undefined {
 
 export function getInitialSectionId(book: { sections: Section[] }): string | null {
     const initial = getInitialSection(book.sections);
-    return initial?.id ?? null;
+    return initial?.id ? String(initial.id) : null;
 }
 
 export function isEndSection(section: Section | null): boolean {

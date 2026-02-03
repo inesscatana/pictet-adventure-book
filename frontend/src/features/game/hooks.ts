@@ -36,7 +36,7 @@ export function useGameState(book: Book | undefined) {
     // Get current section
     const current = useMemo(() => {
         if (!book || !currentId) return null;
-        return book.sections.find((s) => s.id === currentId) ?? null;
+        return book.sections.find((s) => String(s.id) === String(currentId)) ?? null;
     }, [book, currentId]);
 
     // Check for win condition (END section)
@@ -71,7 +71,7 @@ export function useGameState(book: Book | undefined) {
                 }
             }
 
-            setCurrentId(option.gotoId);
+            setCurrentId(String(option.gotoId));
         },
         [isGameOver, isGameWon]
     );
