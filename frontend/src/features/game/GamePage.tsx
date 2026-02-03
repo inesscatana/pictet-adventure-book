@@ -1,81 +1,131 @@
-import { useState, useEffect, useMemo } from "react";
-import { useParams, Link } from "react-router-dom";
-import { useBook } from "./hooks";
-import type { Section } from "./types";
-
-function getInitialSection(sections: Section[]) {
-    return sections[0];
-}
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useBook, useGameState } from "./hooks";
+import { HealthChip } from "./components/HealthChip";
+import { GameOverModal } from "./components/GameOverModal";
 
 export function GamePage() {
     const { path } = useParams();
+    const navigate = useNavigate();
+
     const { data: book, isLoading, isError } = useBook(path ?? "");
+    const { hp, current, isGameOver, isGameWon, applyOption, restartGame } =
+        useGameState(book);
 
-    const [currentId, setCurrentId] = useState<string | null>(null);
+    if (isLoading) {
+        return (
+            <div className="min-h-screen bg-[#fbf7f2] p-10 text-center">
+                Loading...
+            </div>
+        );
+    }
 
-    useEffect(() => {
-        if (!book) return;
-        const initial = getInitialSection(book.sections);
-        setCurrentId(initial?.id ?? null);
-    }, [book]);
+    if (isError || !book || !current) {
+        return (
+            <div className="min-h-screen bg-[#fbf7f2] flex items-center justify-center px-4">
+                <div className="bg-white p-8 rounded-2xl border border-[#ead8c6] text-center max-w-md shadow-sm">
+                    <h2
+                        className="text-xl font-extrabold text-[#2b1f17]"
+                    >
+                        Book unavailable
+                    </h2>
 
-    const current = useMemo(() => {
-        if (!book || !currentId) return null;
-        return book.sections.find((s) => s.id === currentId) ?? null;
-    }, [book, currentId]);
+                    <p className="mt-2 text-sm text-[#6b5647]">
+                        This book could not be loaded. It may not exist on the server.
+                    </p>
 
-    if (isLoading) return <div className="p-10">Loading...</div>;
-    if (isError || !book || !current) return <div className="p-10">Book not found</div>;
+                    <Link
+                        to="/"
+                        className="mt-5 inline-block px-4 py-2 rounded-xl bg-[#b47714] hover:bg-[#9b6510] transition text-white font-semibold text-sm"
+                    >
+                        Back to Library
+                    </Link>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div className="min-h-screen">
-            <div className="mx-auto max-w-4xl px-4 py-8">
+        <div className="min-h-screen bg-[#fbf7f2]">
+            <GameOverModal
+                open={isGameOver || isGameWon}
+                isWon={isGameWon}
+                onRestart={restartGame}
+                onBack={() => navigate("/")}
+            />
 
+            <div className="mx-auto max-w-4xl px-4 py-8">
                 {/* Header */}
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between gap-4">
                     <Link to="/" className="text-sm hover:underline">
                         ← Back to Library
                     </Link>
 
-                    <div className="px-4 py-2 rounded-full border border-[#ead8c6] bg-[#f6efe7] text-sm font-semibold">
-                        {book.title}
+                    <div className="px-4 py-2 rounded-full border border-[#ead8c6] bg-[#f6efe7] text-sm font-semibold inline-flex items-center gap-2">
+                        📖 {book.title}
                     </div>
 
-                    <button className="px-4 py-2 border rounded-xl">
-                        Save Progress
-                    </button>
+                    <div className="flex items-center gap-3">
+                        <HealthChip hp={hp} />
+
+                        <button
+                            type="button"
+                            className="px-4 py-2 rounded-xl border border-[#ead8c6] bg-[#fffaf4] hover:bg-[#fbf3ea] transition text-sm font-semibold"
+                        >
+                            Save Progress
+                        </button>
+                    </div>
                 </div>
 
                 {/* Story Card */}
-                <div className="mt-6 rounded-2xl border border-[#ead8c6] bg-[#fbf7f2] p-8 shadow-sm">
-                    <div className="whitespace-pre-line leading-7 text-[#2b1f17]">
+                <div className="mt-6 rounded-2xl border border-[#ead8c6]  p-10 shadow-sm">
+                    <div className="whitespace-pre-line leading-8 text-[#2b1f17] text-[17px]">
                         {current.text}
                     </div>
 
                     {current.options?.length ? (
                         <>
-                            <hr className="my-8 border-[#ead8c6]" />
+                            <hr className="my-10 border-t border-[#ead8c6]" />
 
-                            <h2 className="text-xl font-bold mb-4">
+                            <h2
+                                className="text-xl font-extrabold"
+                            >
                                 What do you choose?
                             </h2>
 
-                            <div className="space-y-4 bg-[#fffaf4]">
+                            <div className="mt-6 space-y-4">
                                 {current.options.map((opt, index) => (
                                     <button
-                                        key={index}
-                                        onClick={() => setCurrentId(opt.gotoId)}
-                                        className="w-full text-left p-5 rounded-2xl border border-[#ead8c6] hover:bg-[#fbf3ea] transition"
+                                        key={`${current.id}-${index}`}
+                                        type="button"
+                                        onClick={() => applyOption(opt)}
+                                        disabled={isGameOver || isGameWon}
+                                        className={[
+                                            "w-full text-left p-6 rounded-2xl border border-[#ead8c6] bg-[#fffaf4] transition-all duration-200",
+                                            isGameOver || isGameWon
+                                                ? "opacity-60 cursor-not-allowed"
+                                                : "hover:bg-[#fbf3ea] hover:shadow-md",
+                                        ].join(" ")}
                                     >
                                         <div className="flex gap-4">
                                             <span className="h-7 w-7 rounded-full bg-[#2b1f17] text-white text-xs flex items-center justify-center">
                                                 {index + 1}
                                             </span>
 
-                                            <div className="font-semibold">
+                                            <div className="font-semibold text-[#2b1f17]">
                                                 {opt.description}
                                             </div>
                                         </div>
+
+                                        {opt.consequence &&
+                                            (opt.consequence.type.toUpperCase() ===
+                                                "LOSE_HEALTH" ||
+                                                opt.consequence.type.toUpperCase() ===
+                                                "GAIN_HEALTH") ? (
+                                            <div className="mt-2 text-sm text-[#6b5647] italic">
+                                                {opt.consequence.text ??
+                                                    `Health ${opt.consequence.type.toUpperCase() === "LOSE_HEALTH" ? "-" : "+"}${opt.consequence.value}`}
+                                            </div>
+                                        ) : null}
                                     </button>
                                 ))}
                             </div>

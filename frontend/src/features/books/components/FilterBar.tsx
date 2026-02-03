@@ -1,5 +1,5 @@
 import { Icon } from "../../../ui/Icon";
-import { Chip } from "./Chip";
+import { Chip } from "../../../ui/Chip";
 
 interface FilterBarProps {
     availableFilters: string[];

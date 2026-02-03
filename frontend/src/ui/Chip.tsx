@@ -1,15 +1,13 @@
 import type { ReactNode } from "react";
-import { toTitleCase } from "../utils";
+import { toTitleCase } from "../features/books/utils";
 
-export function Chip({
-    active,
-    children,
-    onClick,
-}: {
+interface ChipProps {
     active?: boolean;
     children: ReactNode;
     onClick?: () => void;
-}) {
+}
+
+export function Chip({ active, children, onClick }: ChipProps) {
     return (
         <button
             type="button"
