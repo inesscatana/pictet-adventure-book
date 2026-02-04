@@ -53,6 +53,9 @@ frontend/
 │   │   │   ├── types.ts  # TypeScript types
 │   │   │   ├── HomePage.tsx
 │   │   │   └── components/
+│   │   │       ├── __tests__/  # Component tests
+│   │   │       │   ├── BookCard.test.tsx
+│   │   │       │   └── FilterBar.test.tsx
 │   │   │       ├── BookCard.tsx
 │   │   │       ├── BookGrid.tsx
 │   │   │       ├── FilterBar.tsx
@@ -63,7 +66,9 @@ frontend/
 │   │   └── game/         # Game feature
 │   │       ├── api.ts    # Game API functions (saveProgress, getProgress, etc.)
 │   │       ├── hooks/    # Custom hooks
-│   │       │   └── hooks.ts
+│   │       │   ├── index.ts
+│   │       │   └── __tests__/
+│   │       │       └── index.test.tsx
 │   │       ├── utils/    # Game utilities
 │   │       │   ├── utils.ts
 │   │       │   └── utils.test.ts
@@ -71,6 +76,7 @@ frontend/
 │   │       ├── GamePage.tsx
 │   │       └── components/
 │   │           ├── __tests__/  # Component tests
+│   │           │   ├── GameEndScreen.test.tsx
 │   │           │   ├── HealthChip.test.tsx
 │   │           │   └── SectionCounter.test.tsx
 │   │           ├── GameEndScreen.tsx
@@ -81,6 +87,7 @@ frontend/
 │   │   │   ├── Chip.test.tsx
 │   │   │   ├── EmptyState.test.tsx
 │   │   │   ├── ErrorState.test.tsx
+│   │   │   ├── Icon.test.tsx
 │   │   │   ├── LoadingState.test.tsx
 │   │   │   └── ProgressBar.test.tsx
 │   │   ├── Chip.tsx      # Reusable chip component
@@ -304,38 +311,6 @@ VITE_API_PREFIX=/service
 
 Default is `/service` if not specified.
 
-## 🧪 Testing
-
-### Test Organization
-Tests are organized using a co-location pattern:
-- **Component tests**: Located in `__tests__/` folders within component directories
-- **Utility/Hook tests**: Located next to source files (e.g., `utils.test.ts` next to `utils.ts`)
-- **Test setup**: Configured in `src/test/setup.ts`
-
-### Test Coverage
-
-**High Priority (✅ Complete):**
-- ✅ Utility functions (`utils/` in both features)
-- ✅ Custom hooks (`hooks/` in books feature)
-- ✅ UI components (Chip, EmptyState, ErrorState, LoadingState, ProgressBar)
-- ✅ Game components (HealthChip, SectionCounter)
-
-**Medium Priority (⚠️ Partial):**
-- ⚠️ Game hooks (`useBook`, `useGameState`) - Complex, needs mocking
-- ⚠️ Books feature components (BookCard, BookGrid, FilterBar, SearchInput, etc.)
-- ⚠️ GameEndScreen component
-- ⚠️ Icon component
-
-**Lower Priority (Optional):**
-- API function tests (integration tests)
-- End-to-end component integration tests
-
-### Running Tests
-```bash
-npm test              # Run tests in watch mode
-npm run test:ui       # Open Vitest UI for interactive testing
-npm run test:coverage # Generate coverage report
-```
 
 ## 📝 Notes
 
