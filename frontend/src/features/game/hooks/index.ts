@@ -1,14 +1,14 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getBook, getProgress, saveProgress } from "./api";
-import type { Book, Option } from "./types";
+import { getBook, getProgress, saveProgress } from "../api";
+import type { Book, Option } from "../types";
 import {
     INITIAL_HEALTH,
     getInitialSectionId,
     isEndSection,
     processConsequence,
     calculateProgress,
-} from "./utils";
+} from "../utils/utils";
 
 export function useBook(path: string) {
     return useQuery({

@@ -1,4 +1,4 @@
-import type { BookSummary } from "./types";
+import type { BookSummary } from "../types";
 
 export const difficultyLabelMap = {
     easy: "Easy",

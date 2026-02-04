@@ -1,12 +1,13 @@
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getBooks } from "./api";
-import { listProgress } from "../game/api";
-import { FILTER_PREFERRED_ORDER, matchesFilters, matchesSearch } from "./utils";
-import type { BookSummary } from "./types";
+import { getBooks } from "../api";
+import { listProgress } from "../../game/api";
+import type { SavedProgress } from "../../game/types";
+import { FILTER_PREFERRED_ORDER, matchesFilters, matchesSearch } from "../utils/utils";
+import type { BookSummary } from "../types";
 
 export function useBooks() {
-    return useQuery({
+    return useQuery<BookSummary[]>({
         queryKey: ["books"],
         queryFn: getBooks,
     });
@@ -62,7 +63,7 @@ export function useBookFilters(books: BookSummary[]) {
 }
 
 export function useSavedProgress() {
-    return useQuery({
+    return useQuery<SavedProgress[]>({
         queryKey: ["savedProgress"],
         queryFn: listProgress,
     });

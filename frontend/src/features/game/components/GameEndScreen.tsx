@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { ProgressBar } from "../../../ui/ProgressBar";
 import { SectionCounter } from "./SectionCounter";
-import type { ProgressInfo } from "../utils";
+import type { ProgressInfo } from "../utils/utils";
 
 interface GameEndScreenProps {
     isWon: boolean;

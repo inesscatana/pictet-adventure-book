@@ -1,6 +1,7 @@
 import { useBooks, useBookFilters, useSavedProgress } from "./hooks";
 import { HeroSection } from "./components/HeroSection";
 import { LibrarySection } from "./components/LibrarySection";
+import type { BookSummary } from "./types";
 
 export function HomePage() {
     const { data: books = [], isLoading, isError, error, refetch } = useBooks();
@@ -14,7 +15,7 @@ export function HomePage() {
         filteredBooks,
         toggleFilter,
         clearFilters,
-    } = useBookFilters(books);
+    } = useBookFilters(books as BookSummary[]);
 
     const hasActiveFilters = search.trim().length > 0 || activeFilters.length > 0;
 

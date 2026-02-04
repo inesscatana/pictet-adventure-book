@@ -2,7 +2,7 @@ import type { BookSummary } from "../types";
 import type { SavedProgress } from "../../game/types";
 import { useNavigate } from "react-router-dom";
 import { Icon } from "../../../ui/Icon";
-import { difficultyLabelMap, getDifficultyStyles } from "../utils";
+import { difficultyLabelMap, getDifficultyStyles } from "../utils/utils";
 
 interface BookCardProps {
     book: BookSummary;

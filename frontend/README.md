@@ -27,6 +27,9 @@ The application will be available at `http://localhost:5173`
 - `npm run build` - Build for production (TypeScript compilation + Vite build)
 - `npm run lint` - Run ESLint to check code quality
 - `npm run preview` - Preview the production build locally
+- `npm test` - Run tests in watch mode
+- `npm run test:ui` - Open Vitest UI for interactive testing
+- `npm run test:coverage` - Generate test coverage report
 
 ## 📁 Project Structure
 
@@ -41,9 +44,13 @@ frontend/
 │   ├── features/         # Feature modules
 │   │   ├── books/        # Library feature
 │   │   │   ├── api.ts    # Books API functions
-│   │   │   ├── hooks.ts  # Custom hooks (useBooks, useBookFilters, useSavedProgress)
+│   │   │   ├── hooks/    # Custom hooks
+│   │   │   │   ├── index.ts
+│   │   │   │   └── index.test.tsx
+│   │   │   ├── utils/    # Utility functions
+│   │   │   │   ├── utils.ts
+│   │   │   │   └── utils.test.ts
 │   │   │   ├── types.ts  # TypeScript types
-│   │   │   ├── utils.ts  # Utility functions
 │   │   │   ├── HomePage.tsx
 │   │   │   └── components/
 │   │   │       ├── BookCard.tsx
@@ -55,15 +62,27 @@ frontend/
 │   │   │       └── SearchInput.tsx
 │   │   └── game/         # Game feature
 │   │       ├── api.ts    # Game API functions (saveProgress, getProgress, etc.)
-│   │       ├── hooks.ts  # Custom hooks (useBook, useGameState)
+│   │       ├── hooks/    # Custom hooks
+│   │       │   └── hooks.ts
+│   │       ├── utils/    # Game utilities
+│   │       │   ├── utils.ts
+│   │       │   └── utils.test.ts
 │   │       ├── types.ts  # TypeScript types
-│   │       ├── utils.ts  # Game utilities (health, progress, consequences)
 │   │       ├── GamePage.tsx
 │   │       └── components/
+│   │           ├── __tests__/  # Component tests
+│   │           │   ├── HealthChip.test.tsx
+│   │           │   └── SectionCounter.test.tsx
 │   │           ├── GameEndScreen.tsx
 │   │           ├── HealthChip.tsx
 │   │           └── SectionCounter.tsx
 │   ├── ui/               # Shared UI components
+│   │   ├── __tests__/    # UI component tests
+│   │   │   ├── Chip.test.tsx
+│   │   │   ├── EmptyState.test.tsx
+│   │   │   ├── ErrorState.test.tsx
+│   │   │   ├── LoadingState.test.tsx
+│   │   │   └── ProgressBar.test.tsx
 │   │   ├── Chip.tsx      # Reusable chip component
 │   │   ├── EmptyState.tsx # Empty state component
 │   │   ├── ErrorState.tsx # Error state component
@@ -71,6 +90,8 @@ frontend/
 │   │   ├── icons.ts      # Icon definitions
 │   │   ├── LoadingState.tsx # Loading state component
 │   │   └── ProgressBar.tsx  # Progress bar component
+│   ├── test/             # Test configuration
+│   │   └── setup.ts      # Test setup file
 │   ├── index.css         # Global styles
 │   └── main.tsx          # Application entry point
 ├── public/               # Static assets
@@ -157,6 +178,13 @@ The project uses Tailwind CSS 4 for styling with a custom color palette:
 - `typescript` - TypeScript compiler
 - `eslint` - Linting
 - `@vitejs/plugin-react` - Vite React plugin
+
+### Testing
+- `vitest` - Fast unit test framework (Jest-compatible)
+- `@testing-library/react` - React component testing utilities
+- `@testing-library/jest-dom` - Custom Jest matchers for DOM
+- `@testing-library/user-event` - User interaction simulation
+- `jsdom` - DOM environment for testing
 
 ## 🎯 Features
 
@@ -276,6 +304,39 @@ VITE_API_PREFIX=/service
 
 Default is `/service` if not specified.
 
+## 🧪 Testing
+
+### Test Organization
+Tests are organized using a co-location pattern:
+- **Component tests**: Located in `__tests__/` folders within component directories
+- **Utility/Hook tests**: Located next to source files (e.g., `utils.test.ts` next to `utils.ts`)
+- **Test setup**: Configured in `src/test/setup.ts`
+
+### Test Coverage
+
+**High Priority (✅ Complete):**
+- ✅ Utility functions (`utils/` in both features)
+- ✅ Custom hooks (`hooks/` in books feature)
+- ✅ UI components (Chip, EmptyState, ErrorState, LoadingState, ProgressBar)
+- ✅ Game components (HealthChip, SectionCounter)
+
+**Medium Priority (⚠️ Partial):**
+- ⚠️ Game hooks (`useBook`, `useGameState`) - Complex, needs mocking
+- ⚠️ Books feature components (BookCard, BookGrid, FilterBar, SearchInput, etc.)
+- ⚠️ GameEndScreen component
+- ⚠️ Icon component
+
+**Lower Priority (Optional):**
+- API function tests (integration tests)
+- End-to-end component integration tests
+
+### Running Tests
+```bash
+npm test              # Run tests in watch mode
+npm run test:ui       # Open Vitest UI for interactive testing
+npm run test:coverage # Generate coverage report
+```
+
 ## 📝 Notes
 
 - The application uses React 19 features
@@ -285,3 +346,4 @@ Default is `/service` if not specified.
 - Components follow accessibility best practices (ARIA attributes, semantic HTML)
 - Shared UI components are located in `src/ui/` for reusability across features
 - Game progress is saved to the backend and can be resumed from the library
+- Tests use Vitest with React Testing Library for component testing

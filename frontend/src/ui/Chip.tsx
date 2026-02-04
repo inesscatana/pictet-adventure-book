@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { toTitleCase } from "../features/books/utils";
+import { toTitleCase } from "../features/books/utils/utils";
 
 interface ChipProps {
     active?: boolean;
