@@ -48,13 +48,10 @@ frontend/
 │   │   │   └── components/
 │   │   │       ├── BookCard.tsx
 │   │   │       ├── BookGrid.tsx
-│   │   │       ├── EmptyState.tsx
-│   │   │       ├── ErrorState.tsx
 │   │   │       ├── FilterBar.tsx
 │   │   │       ├── HeroSection.tsx
 │   │   │       ├── LibraryHeader.tsx
 │   │   │       ├── LibrarySection.tsx
-│   │   │       ├── LoadingState.tsx
 │   │   │       └── SearchInput.tsx
 │   │   └── game/         # Game feature
 │   │       ├── api.ts    # Game API functions (saveProgress, getProgress, etc.)
@@ -65,12 +62,15 @@ frontend/
 │   │       └── components/
 │   │           ├── GameEndScreen.tsx
 │   │           ├── HealthChip.tsx
-│   │           ├── ProgressBar.tsx
 │   │           └── SectionCounter.tsx
 │   ├── ui/               # Shared UI components
 │   │   ├── Chip.tsx      # Reusable chip component
+│   │   ├── EmptyState.tsx # Empty state component
+│   │   ├── ErrorState.tsx # Error state component
 │   │   ├── Icon.tsx      # Icon component wrapper
-│   │   └── icons.ts      # Icon definitions
+│   │   ├── icons.ts      # Icon definitions
+│   │   ├── LoadingState.tsx # Loading state component
+│   │   └── ProgressBar.tsx  # Progress bar component
 │   ├── index.css         # Global styles
 │   └── main.tsx          # Application entry point
 ├── public/               # Static assets
@@ -120,8 +120,10 @@ The project uses Tailwind CSS 4 for styling with a custom color palette:
 ### Component Styling
 - Consistent rounded corners (`rounded-xl`, `rounded-2xl`)
 - Shadow utilities for depth
-- Responsive design with Tailwind breakpoints
-- Hover states and transitions
+- Fully responsive design with Tailwind breakpoints (`sm:`, `md:`, `lg:`)
+- Mobile-first approach with adaptive layouts
+- Hover states and smooth transitions
+- Optimized spacing and typography for all screen sizes
 
 ## 🔧 Key Technologies
 
@@ -166,11 +168,12 @@ The project uses Tailwind CSS 4 for styling with a custom color palette:
 
 ### Game Feature (`features/game/`)
 - Interactive story navigation
-- Health point management
+- Health point management with visual health chip
 - Progress tracking (progress bar and section counter)
-- Save and resume game progress
-- Game end screen (victory/defeat)
+- Save and resume game progress (persisted on backend)
+- Game end screen (victory/defeat) with full-screen layout
 - Consequence handling (health gains/losses)
+- Responsive design optimized for mobile, tablet, and desktop
 
 ## 🔌 API Integration
 
@@ -193,11 +196,31 @@ The frontend communicates with the backend API through:
 ## 🧩 Component Library
 
 ### Shared UI Components (`src/ui/`)
-- **Icon** - Icon component with accessibility support
-- **Chip** - Reusable chip/badge component
+Reusable components used across the application:
+
+- **Chip** - Reusable chip/badge component for filters and tags
+- **EmptyState** - Empty state component with optional action button
+- **ErrorState** - Error state component with retry functionality
+- **Icon** - Icon component wrapper with accessibility support
+- **LoadingState** - Loading state component with customizable message
+- **ProgressBar** - Progress bar component with percentage display and label
 
 ### Feature Components
-Each feature has its own component directory with specialized components following the single responsibility principle.
+Each feature has its own component directory with specialized components following the single responsibility principle:
+
+**Books Feature:**
+- `BookCard` - Individual book card with metadata and action buttons
+- `BookGrid` - Responsive grid layout for book cards
+- `FilterBar` - Filter chips for book filtering
+- `HeroSection` - Hero section with book count
+- `LibraryHeader` - Library section header
+- `LibrarySection` - Main library container component
+- `SearchInput` - Search input with icon
+
+**Game Feature:**
+- `GameEndScreen` - Full-screen end game screen (victory/defeat)
+- `HealthChip` - Health point display with color-coded status
+- `SectionCounter` - Section progress counter (e.g., "Section 5 of 17")
 
 ## 🛠️ Development Guidelines
 
@@ -215,8 +238,10 @@ Each feature has its own component directory with specialized components followi
 ### Component Best Practices
 - Functional components with hooks
 - Props typed with TypeScript interfaces
-- Accessibility attributes where appropriate
-- Responsive design considerations
+- Accessibility attributes where appropriate (ARIA labels, roles)
+- Mobile-first responsive design with Tailwind breakpoints
+- Shared UI components in `ui/` folder for reusability
+- Feature-specific components in feature directories
 
 ### State Management
 - Use React Query for server state
@@ -256,4 +281,7 @@ Default is `/service` if not specified.
 - The application uses React 19 features
 - TypeScript strict mode is enabled
 - All API calls are handled through React Query for caching and error handling
-- The UI is fully responsive and accessible
+- The UI is fully responsive (mobile, tablet, desktop) with mobile-first design
+- Components follow accessibility best practices (ARIA attributes, semantic HTML)
+- Shared UI components are located in `src/ui/` for reusability across features
+- Game progress is saved to the backend and can be resumed from the library
