@@ -3,7 +3,7 @@ import { Link, useParams, useSearchParams } from "react-router-dom";
 import { useBook, useGameState } from "./hooks";
 import { HealthChip } from "./components/HealthChip";
 import { GameEndScreen } from "./components/GameEndScreen";
-import { ProgressBar } from "./components/ProgressBar";
+import { ProgressBar } from "../../ui/ProgressBar";
 import { SectionCounter } from "./components/SectionCounter";
 import { Icon } from "../../ui/Icon";
 
@@ -91,26 +91,32 @@ export function GamePage() {
             <div className="mx-auto max-w-4xl px-4 py-8">
                 {/* Header */}
                 <div className="space-y-4">
-                    <div className="flex items-center justify-between gap-4">
-                        <Link to="/" className="text-sm hover:underline">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <Link to="/" className="text-sm hover:underline whitespace-nowrap">
                             ← Back to Library
                         </Link>
 
-                        <div className="px-4 py-2 rounded-full border border-[#ead8c6] bg-[#f6efe7] text-sm font-semibold inline-flex items-center gap-2">
-                            📖 {book.title}
+                        <div className="px-4 py-2 rounded-full border border-[#ead8c6] bg-[#f6efe7] text-sm font-semibold inline-flex items-center gap-2 max-w-full sm:max-w-none truncate sm:truncate-none">
+                            <span className="hidden sm:inline">📖</span>
+                            <span className="truncate">{book.title}</span>
                         </div>
 
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
                             <HealthChip hp={hp} />
 
                             <button
                                 type="button"
                                 onClick={handleSave}
                                 disabled={isSaving || isGameOver || isGameWon}
-                                className="px-4 py-2 rounded-xl border border-[#ead8c6] bg-[#fffaf4] hover:bg-[#fbf3ea] transition text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"
+                                className="px-3 sm:px-4 py-2 rounded-xl border border-[#ead8c6] bg-[#fffaf4] hover:bg-[#fbf3ea] transition text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2 whitespace-nowrap flex-shrink-0"
                             >
                                 <Icon name="save" label="Save" />
-                                {isSaving ? "Saving..." : saveMessage || "Save Progress"}
+                                <span className="hidden sm:inline">
+                                    {isSaving ? "Saving..." : saveMessage || "Save Progress"}
+                                </span>
+                                <span className="sm:hidden">
+                                    {isSaving ? "Saving..." : "Save"}
+                                </span>
                             </button>
                         </div>
                     </div>
@@ -133,8 +139,8 @@ export function GamePage() {
                 </div>
 
                 {/* Story Card */}
-                <div className="mt-6 rounded-2xl border border-[#ead8c6] bg-white p-10 shadow-sm">
-                    <div className="whitespace-pre-line leading-8 text-[#2b1f17] text-[17px]">
+                <div className="mt-6 rounded-2xl border border-[#ead8c6] bg-white p-6 sm:p-10 shadow-sm">
+                    <div className="whitespace-pre-line leading-7 sm:leading-8 text-[#2b1f17] text-base sm:text-[17px]">
                         {current.text}
                     </div>
 
@@ -156,14 +162,14 @@ export function GamePage() {
                                         onClick={() => applyOption(opt)}
                                         disabled={isGameOver || isGameWon}
                                         className={[
-                                            "w-full text-left p-6 rounded-2xl border border-[#ead8c6] bg-[#fffaf4] transition-all duration-200",
+                                            "w-full text-left p-4 sm:p-6 rounded-2xl border border-[#ead8c6] bg-[#fffaf4] transition-all duration-200",
                                             isGameOver || isGameWon
                                                 ? "opacity-60 cursor-not-allowed"
                                                 : "hover:bg-[#fbf3ea] hover:shadow-md",
                                         ].join(" ")}
                                     >
-                                        <div className="flex gap-4">
-                                            <span className="h-7 w-7 rounded-full bg-[#2b1f17] text-white text-xs flex items-center justify-center">
+                                        <div className="flex gap-3 sm:gap-4">
+                                            <span className="h-8 w-8 sm:h-7 sm:w-7 rounded-full bg-[#2b1f17] text-white text-xs sm:text-xs flex items-center justify-center flex-shrink-0">
                                                 {index + 1}
                                             </span>
 

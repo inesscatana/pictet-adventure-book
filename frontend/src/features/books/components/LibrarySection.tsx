@@ -3,9 +3,9 @@ import type { SavedProgress } from "../../game/types";
 import { SearchInput } from "./SearchInput";
 import { FilterBar } from "./FilterBar";
 import { LibraryHeader } from "./LibraryHeader";
-import { LoadingState } from "./LoadingState";
-import { ErrorState } from "./ErrorState";
-import { EmptyState } from "./EmptyState";
+import { LoadingState } from "../../../ui/LoadingState";
+import { ErrorState } from "../../../ui/ErrorState";
+import { EmptyState } from "../../../ui/EmptyState";
 import { BookGrid } from "./BookGrid";
 
 interface LibrarySectionProps {
@@ -57,10 +57,14 @@ export function LibrarySection({
             />
 
             <div className="mt-8">
-                {isLoading && <LoadingState />}
+                {isLoading && <LoadingState message="Loading books…" />}
                 {isError && <ErrorState message={errorMessage} onRetry={onRetry} />}
                 {!isLoading && !isError && filteredBooks.length === 0 && (
-                    <EmptyState hasActiveFilters={hasActiveFilters} onClearAll={onClearAll} />
+                    <EmptyState
+                        message="No books found matching your criteria."
+                        actionLabel={hasActiveFilters ? "Clear search and filters" : undefined}
+                        onAction={hasActiveFilters ? onClearAll : undefined}
+                    />
                 )}
                 {!isLoading && !isError && filteredBooks.length > 0 && (
                     <BookGrid books={filteredBooks} savedProgress={savedProgress} />
