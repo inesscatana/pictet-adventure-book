@@ -1,18 +1,49 @@
-import { Link, useParams } from "react-router-dom";
+import { useState } from "react";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { useBook, useGameState } from "./hooks";
 import { HealthChip } from "./components/HealthChip";
 import { GameEndScreen } from "./components/GameEndScreen";
 import { ProgressBar } from "./components/ProgressBar";
 import { SectionCounter } from "./components/SectionCounter";
+import { Icon } from "../../ui/Icon";
 
 export function GamePage() {
     const { path } = useParams();
+    const [searchParams] = useSearchParams();
+    const bookPath = path ?? "";
+    const startNew = searchParams.get("new") === "true";
 
-    const { data: book, isLoading, isError } = useBook(path ?? "");
-    const { hp, current, progress, isGameOver, isGameWon, applyOption, restartGame } =
-        useGameState(book);
+    const { data: book, isLoading, isError } = useBook(bookPath);
+    const {
+        hp,
+        current,
+        progress,
+        isGameOver,
+        isGameWon,
+        isLoadingProgress,
+        applyOption,
+        saveGameProgress,
+        restartGame,
+    } = useGameState(book, bookPath, startNew);
 
-    if (isLoading) {
+    const [isSaving, setIsSaving] = useState(false);
+    const [saveMessage, setSaveMessage] = useState<string | null>(null);
+
+    const handleSave = async () => {
+        setIsSaving(true);
+        setSaveMessage(null);
+        try {
+            await saveGameProgress();
+            setSaveMessage("Progress saved!");
+            setTimeout(() => setSaveMessage(null), 2000);
+        } catch (error) {
+            setSaveMessage("Failed to save progress");
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    if (isLoading || isLoadingProgress) {
         return (
             <div className="min-h-screen bg-[#fbf7f2] p-10 text-center">
                 Loading...
@@ -74,9 +105,12 @@ export function GamePage() {
 
                             <button
                                 type="button"
-                                className="px-4 py-2 rounded-xl border border-[#ead8c6] bg-[#fffaf4] hover:bg-[#fbf3ea] transition text-sm font-semibold"
+                                onClick={handleSave}
+                                disabled={isSaving || isGameOver || isGameWon}
+                                className="px-4 py-2 rounded-xl border border-[#ead8c6] bg-[#fffaf4] hover:bg-[#fbf3ea] transition text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"
                             >
-                                Save Progress
+                                <Icon name="save" label="Save" />
+                                {isSaving ? "Saving..." : saveMessage || "Save Progress"}
                             </button>
                         </div>
                     </div>

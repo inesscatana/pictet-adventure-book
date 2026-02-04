@@ -8,12 +8,17 @@ import pictet.com.adventurebook.backendapi.domain.Book;
 import pictet.com.adventurebook.backendapi.domain.BookSummary;
 import pictet.com.adventurebook.backendapi.domain.Progress;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
 public class BookService {
     private final JsonService jsonService;
+    
+    // In-memory storage for progress (in production, use a database)
+    private final ConcurrentHashMap<String, Progress> progressStorage = new ConcurrentHashMap<>();
 
     public List<BookSummary> getAllBooks() {
         return List.of(
@@ -101,11 +106,27 @@ public class BookService {
         }
     }
 
-    public List<Progress> listProgress(String book) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public List<Progress> listProgress() {
+        return new ArrayList<>(progressStorage.values());
     }
 
-    public void saveProgress(String book, long section) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void saveProgress(String book, String sectionId, Integer health) {
+        Progress progress = new Progress();
+        progress.setBook(book);
+        progress.setSectionId(sectionId);
+        progress.setHealth(health);
+        progress.setTimestamp(System.currentTimeMillis());
+        progressStorage.put(book, progress);
+    }
+
+    public Progress getProgress(String bookPath) {
+        Progress progress = progressStorage.get(bookPath);
+        if (progress == null) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.NOT_FOUND,
+                "No saved progress found for book: " + bookPath
+            );
+        }
+        return progress;
     }
 }

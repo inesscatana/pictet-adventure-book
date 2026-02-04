@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getBooks } from "./api";
+import { listProgress } from "../game/api";
 import { FILTER_PREFERRED_ORDER, matchesFilters, matchesSearch } from "./utils";
 import type { BookSummary } from "./types";
 
@@ -58,4 +59,11 @@ export function useBookFilters(books: BookSummary[]) {
         toggleFilter,
         clearFilters,
     };
+}
+
+export function useSavedProgress() {
+    return useQuery({
+        queryKey: ["savedProgress"],
+        queryFn: listProgress,
+    });
 }

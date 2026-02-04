@@ -26,3 +26,10 @@ export type Book = {
     type: string;
     sections: Section[];
 };
+
+export type SavedProgress = {
+    book: string;
+    sectionId: string;
+    health: number;
+    timestamp: number;
+};

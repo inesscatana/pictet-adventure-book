@@ -5,6 +5,8 @@ export const Icons = {
     search: "🔍",
     filter: "🔽",
     clock: "🕔",
+    play: "▶️",
+    save: "💾",
 } as const;
 
 

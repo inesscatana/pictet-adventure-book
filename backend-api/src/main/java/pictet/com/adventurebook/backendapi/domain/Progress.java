@@ -8,9 +8,15 @@ import lombok.Setter;
 @Setter
 @Schema(description = "Reading progress information for an adventure book")
 public class Progress {
-    @Schema(description = "Identifier of the book being read", example = "adventure_001")
+    @Schema(description = "Identifier of the book being read", example = "pirates-jade-sea.json")
     private String book;
 
-    @Schema(description = "Section number where the reader left off", example = "15")
-    private long section;
+    @Schema(description = "Section ID where the reader left off", example = "20")
+    private String sectionId;
+
+    @Schema(description = "Current health points", example = "85")
+    private int health;
+
+    @Schema(description = "Timestamp when progress was saved (milliseconds since epoch)", example = "1704067200000")
+    private long timestamp;
 }

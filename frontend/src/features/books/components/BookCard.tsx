@@ -1,10 +1,17 @@
 import type { BookSummary } from "../types";
+import type { SavedProgress } from "../../game/types";
 import { useNavigate } from "react-router-dom";
 import { Icon } from "../../../ui/Icon";
 import { difficultyLabelMap, getDifficultyStyles } from "../utils";
 
-export function BookCard({ book }: { book: BookSummary }) {
+interface BookCardProps {
+    book: BookSummary;
+    savedProgress?: SavedProgress;
+}
+
+export function BookCard({ book, savedProgress }: BookCardProps) {
     const navigate = useNavigate();
+    const hasSavedProgress = !!savedProgress;
 
     return (
         <article className="h-full rounded-2xl border border-[#ead8c6] bg-[#fffaf4] shadow-[0_6px_18px_rgba(43,31,23,0.06)] p-7 flex flex-col">
@@ -57,15 +64,36 @@ export function BookCard({ book }: { book: BookSummary }) {
             </div>
 
             <div className="mt-auto pt-6">
-                <button
-                    onClick={() => navigate(`/game/${book.path}`)}
-                    className="h-11 w-full rounded-xl font-semibold text-white shadow-sm
+                {hasSavedProgress ? (
+                    <div className="space-y-2">
+                        <button
+                            onClick={() => navigate(`/game/${book.path}`)}
+                            className="h-11 w-full rounded-xl font-semibold text-white shadow-sm
+              bg-[#c88c1e] hover:bg-[#b47714] transition
+              inline-flex items-center justify-center gap-2"
+                        >
+                            <Icon name="play" label="Resume" />
+                            Resume Quest
+                        </button>
+                        <button
+                            onClick={() => navigate(`/game/${book.path}?new=true`)}
+                            className="h-9 w-full rounded-xl font-semibold text-[#6b5647] border border-[#ead8c6] bg-[#fffaf4] hover:bg-[#fbf3ea] transition
+              inline-flex items-center justify-center gap-2"
+                        >
+                            Start New
+                        </button>
+                    </div>
+                ) : (
+                    <button
+                        onClick={() => navigate(`/game/${book.path}`)}
+                        className="h-11 w-full rounded-xl font-semibold text-white shadow-sm
           bg-[#c88c1e] hover:bg-[#b47714] transition
           inline-flex items-center justify-center gap-2"
-                >
-                    <Icon name="sparkling" label="Begin quest" />
-                    Begin Quest
-                </button>
+                    >
+                        <Icon name="sparkling" label="Begin quest" />
+                        Begin Quest
+                    </button>
+                )}
             </div>
         </article>
     );

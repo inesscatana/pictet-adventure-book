@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getBook } from "./api";
-import type { Book, Option, } from "./types";
+import { getBook, getProgress, saveProgress } from "./api";
+import type { Book, Option } from "./types";
 import {
     INITIAL_HEALTH,
     getInitialSectionId,
@@ -18,21 +18,55 @@ export function useBook(path: string) {
     });
 }
 
-export function useGameState(book: Book | undefined) {
+export function useGameState(book: Book | undefined, bookPath: string | null, startNew: boolean = false) {
     const [currentId, setCurrentId] = useState<string | null>(null);
     const [hp, setHp] = useState(INITIAL_HEALTH);
     const [isGameOver, setIsGameOver] = useState(false);
     const [isGameWon, setIsGameWon] = useState(false);
+    const [isLoadingProgress, setIsLoadingProgress] = useState(true);
 
-    // Initialize game when book loads
-    useEffect(() => {
-        if (!book) return;
-
+    // Helper function to initialize game from beginning
+    const initializeFromBeginning = useCallback((book: Book) => {
         setCurrentId(getInitialSectionId(book));
         setHp(INITIAL_HEALTH);
+    }, []);
+
+    // Load saved progress when book loads (unless startNew is true)
+    useEffect(() => {
+        if (!book || !bookPath) {
+            setIsLoadingProgress(false);
+            return;
+        }
+
+        const loadSavedProgress = async () => {
+            if (startNew) {
+                // Start new game, ignore saved progress
+                initializeFromBeginning(book);
+                setIsLoadingProgress(false);
+                return;
+            }
+
+            try {
+                const saved = await getProgress(bookPath);
+                if (saved) {
+                    setCurrentId(saved.sectionId);
+                    setHp(saved.health);
+                } else {
+                    // No saved progress, start from beginning
+                    initializeFromBeginning(book);
+                }
+            } catch (error) {
+                // Unexpected error loading progress, start from beginning
+                initializeFromBeginning(book);
+            } finally {
+                setIsLoadingProgress(false);
+            }
+        };
+
+        loadSavedProgress();
         setIsGameOver(false);
         setIsGameWon(false);
-    }, [book]);
+    }, [book, bookPath, startNew, initializeFromBeginning]);
 
     // Get current section
     const current = useMemo(() => {
@@ -82,6 +116,20 @@ export function useGameState(book: Book | undefined) {
         [isGameOver, isGameWon]
     );
 
+    // Save progress
+    const saveGameProgress = useCallback(async () => {
+        if (!book || !currentId || !bookPath) {
+            return;
+        }
+
+        try {
+            await saveProgress(bookPath, currentId, hp);
+        } catch (error) {
+            console.error("Failed to save progress:", error);
+            throw error;
+        }
+    }, [book, currentId, hp, bookPath]);
+
     // Restart game
     const restartGame = useCallback(() => {
         if (!book) return;
@@ -98,7 +146,9 @@ export function useGameState(book: Book | undefined) {
         progress,
         isGameOver,
         isGameWon,
+        isLoadingProgress,
         applyOption,
+        saveGameProgress,
         restartGame,
     };
 }

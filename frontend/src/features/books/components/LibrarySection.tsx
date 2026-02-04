@@ -1,4 +1,5 @@
 import type { BookSummary } from "../types";
+import type { SavedProgress } from "../../game/types";
 import { SearchInput } from "./SearchInput";
 import { FilterBar } from "./FilterBar";
 import { LibraryHeader } from "./LibraryHeader";
@@ -21,6 +22,7 @@ interface LibrarySectionProps {
     filteredBooks: BookSummary[];
     hasActiveFilters: boolean;
     onRetry?: () => void;
+    savedProgress: SavedProgress[];
 }
 
 export function LibrarySection({
@@ -37,6 +39,7 @@ export function LibrarySection({
     filteredBooks,
     hasActiveFilters,
     onRetry,
+    savedProgress,
 }: LibrarySectionProps) {
     return (
         <section className="mx-auto max-w-6xl px-4 py-10" aria-label="Adventure library">
@@ -60,7 +63,7 @@ export function LibrarySection({
                     <EmptyState hasActiveFilters={hasActiveFilters} onClearAll={onClearAll} />
                 )}
                 {!isLoading && !isError && filteredBooks.length > 0 && (
-                    <BookGrid books={filteredBooks} />
+                    <BookGrid books={filteredBooks} savedProgress={savedProgress} />
                 )}
             </div>
         </section>

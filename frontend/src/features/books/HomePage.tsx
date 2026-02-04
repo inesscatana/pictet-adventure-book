@@ -1,9 +1,10 @@
-import { useBooks, useBookFilters } from "./hooks";
+import { useBooks, useBookFilters, useSavedProgress } from "./hooks";
 import { HeroSection } from "./components/HeroSection";
 import { LibrarySection } from "./components/LibrarySection";
 
 export function HomePage() {
     const { data: books = [], isLoading, isError, error, refetch } = useBooks();
+    const { data: savedProgress = [] } = useSavedProgress();
 
     const {
         search,
@@ -41,6 +42,7 @@ export function HomePage() {
                 filteredBooks={filteredBooks}
                 hasActiveFilters={hasActiveFilters}
                 onRetry={refetch}
+                savedProgress={savedProgress}
             />
         </div>
     );
