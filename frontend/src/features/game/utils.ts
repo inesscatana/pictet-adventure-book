@@ -16,7 +16,15 @@ export function getInitialSectionId(book: { sections: Section[] }): string | nul
 }
 
 export function isEndSection(section: Section | null): boolean {
-    return section?.type === "END";
+    if (!section) return false;
+
+    // Explicit END type
+    if (section.type?.toUpperCase() === "END") return true;
+
+    // Sections with no options are also endings (dead ends or completion)
+    if (!section.options || section.options.length === 0) return true;
+
+    return false;
 }
 
 export function processConsequence(
@@ -58,4 +66,45 @@ export function getHealthStatus(health: number): string {
     if (health > 30) return "Injured";
     if (health > 0) return "Critical";
     return "Defeated";
+}
+
+export interface ProgressInfo {
+    currentSectionIndex: number;
+    totalSections: number;
+    percentage: number;
+    sectionNumber: number;
+}
+
+export function calculateProgress(
+    book: { sections: Section[] } | undefined,
+    currentSectionId: string | null,
+    currentSection: Section | null
+): ProgressInfo | null {
+    if (!book || !currentSectionId) return null;
+
+    const sections = book.sections;
+    const currentIndex = sections.findIndex(
+        (s) => String(s.id) === String(currentSectionId)
+    );
+
+    if (currentIndex === -1) return null;
+
+    const totalSections = sections.length;
+
+    // If current section is END, show 100% completion and display total sections
+    const isEndSection = currentSection?.type === "END";
+    const percentage = isEndSection
+        ? 100
+        : Math.round(((currentIndex + 1) / totalSections) * 100);
+
+    // When on END section, show total sections as current (e.g., "Section 13 of 13")
+    // Otherwise show actual section number
+    const sectionNumber = isEndSection ? totalSections : currentIndex + 1;
+
+    return {
+        currentSectionIndex: currentIndex,
+        totalSections,
+        percentage,
+        sectionNumber,
+    };
 }

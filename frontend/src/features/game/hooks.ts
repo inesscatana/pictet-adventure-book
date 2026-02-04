@@ -7,6 +7,7 @@ import {
     getInitialSectionId,
     isEndSection,
     processConsequence,
+    calculateProgress,
 } from "./utils";
 
 export function useBook(path: string) {
@@ -39,9 +40,14 @@ export function useGameState(book: Book | undefined) {
         return book.sections.find((s) => String(s.id) === String(currentId)) ?? null;
     }, [book, currentId]);
 
+    // Calculate progress
+    const progress = useMemo(() => {
+        return calculateProgress(book, currentId, current);
+    }, [book, currentId, current]);
+
     // Check for win condition (END section)
     useEffect(() => {
-        if (isEndSection(current)) {
+        if (current && isEndSection(current)) {
             setIsGameWon(true);
         }
     }, [current]);
@@ -89,6 +95,7 @@ export function useGameState(book: Book | undefined) {
     return {
         hp,
         current,
+        progress,
         isGameOver,
         isGameWon,
         applyOption,

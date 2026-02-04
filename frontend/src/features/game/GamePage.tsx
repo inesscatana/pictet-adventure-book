@@ -1,14 +1,15 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useBook, useGameState } from "./hooks";
 import { HealthChip } from "./components/HealthChip";
-import { GameOverModal } from "./components/GameOverModal";
+import { GameEndScreen } from "./components/GameEndScreen";
+import { ProgressBar } from "./components/ProgressBar";
+import { SectionCounter } from "./components/SectionCounter";
 
 export function GamePage() {
     const { path } = useParams();
-    const navigate = useNavigate();
 
     const { data: book, isLoading, isError } = useBook(path ?? "");
-    const { hp, current, isGameOver, isGameWon, applyOption, restartGame } =
+    const { hp, current, progress, isGameOver, isGameWon, applyOption, restartGame } =
         useGameState(book);
 
     if (isLoading) {
@@ -23,9 +24,7 @@ export function GamePage() {
         return (
             <div className="min-h-screen bg-[#fbf7f2] flex items-center justify-center px-4">
                 <div className="bg-white p-8 rounded-2xl border border-[#ead8c6] text-center max-w-md shadow-sm">
-                    <h2
-                        className="text-xl font-extrabold text-[#2b1f17]"
-                    >
+                    <h2 className="text-xl font-extrabold text-[#2b1f17]">
                         Book unavailable
                     </h2>
 
@@ -44,40 +43,63 @@ export function GamePage() {
         );
     }
 
+    // Show full-screen end screen when game is over or won
+    if (isGameOver || isGameWon) {
+        return (
+            <GameEndScreen
+                isWon={isGameWon}
+                bookTitle={book.title}
+                progress={progress}
+                onRestart={restartGame}
+            />
+        );
+    }
+
     return (
         <div className="min-h-screen bg-[#fbf7f2]">
-            <GameOverModal
-                open={isGameOver || isGameWon}
-                isWon={isGameWon}
-                onRestart={restartGame}
-                onBack={() => navigate("/")}
-            />
-
             <div className="mx-auto max-w-4xl px-4 py-8">
                 {/* Header */}
-                <div className="flex items-center justify-between gap-4">
-                    <Link to="/" className="text-sm hover:underline">
-                        ← Back to Library
-                    </Link>
+                <div className="space-y-4">
+                    <div className="flex items-center justify-between gap-4">
+                        <Link to="/" className="text-sm hover:underline">
+                            ← Back to Library
+                        </Link>
 
-                    <div className="px-4 py-2 rounded-full border border-[#ead8c6] bg-[#f6efe7] text-sm font-semibold inline-flex items-center gap-2">
-                        📖 {book.title}
+                        <div className="px-4 py-2 rounded-full border border-[#ead8c6] bg-[#f6efe7] text-sm font-semibold inline-flex items-center gap-2">
+                            📖 {book.title}
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                            <HealthChip hp={hp} />
+
+                            <button
+                                type="button"
+                                className="px-4 py-2 rounded-xl border border-[#ead8c6] bg-[#fffaf4] hover:bg-[#fbf3ea] transition text-sm font-semibold"
+                            >
+                                Save Progress
+                            </button>
+                        </div>
                     </div>
 
-                    <div className="flex items-center gap-3">
-                        <HealthChip hp={hp} />
-
-                        <button
-                            type="button"
-                            className="px-4 py-2 rounded-xl border border-[#ead8c6] bg-[#fffaf4] hover:bg-[#fbf3ea] transition text-sm font-semibold"
-                        >
-                            Save Progress
-                        </button>
-                    </div>
+                    {/* Progress Section */}
+                    {progress && (
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-2 border-t border-[#ead8c6]">
+                            <div className="flex-1 w-full sm:w-auto">
+                                <ProgressBar
+                                    percentage={progress.percentage}
+                                    label="Adventure Progress"
+                                />
+                            </div>
+                            <SectionCounter
+                                current={progress.sectionNumber}
+                                total={progress.totalSections}
+                            />
+                        </div>
+                    )}
                 </div>
 
                 {/* Story Card */}
-                <div className="mt-6 rounded-2xl border border-[#ead8c6]  p-10 shadow-sm">
+                <div className="mt-6 rounded-2xl border border-[#ead8c6] bg-white p-10 shadow-sm">
                     <div className="whitespace-pre-line leading-8 text-[#2b1f17] text-[17px]">
                         {current.text}
                     </div>

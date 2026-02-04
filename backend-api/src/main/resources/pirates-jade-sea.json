@@ -236,7 +236,7 @@
     {
       "id": 666,
       "text": "An unreachable whirlpool drags you into darkness. You shouldn’t be here.",
-      "type": "NODE"
+      "type": "END"
     }
   ]
 }
