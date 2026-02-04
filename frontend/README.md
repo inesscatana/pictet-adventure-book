@@ -2,6 +2,10 @@
 
 React-based frontend for the Adventure Book interactive storytelling platform. Built with React 19, TypeScript, Vite, and Tailwind CSS.
 
+## 📚 Documentation
+
+[View Application Documentation](/Adventure%20Book%20Web%20Application.pdf)
+
 ## 🚀 Quick Start
 
 ### Prerequisites
