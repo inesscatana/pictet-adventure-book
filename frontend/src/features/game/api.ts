@@ -1,7 +1,5 @@
-import { apiGet } from "../../api/http";
+import { apiGet, apiPost } from "../../api/http";
 import type { Book, SavedProgress } from "./types";
-
-const API_PREFIX = import.meta.env.VITE_API_PREFIX ?? "/service";
 
 export function getBook(path: string) {
     return apiGet<Book>(`/books/${encodeURIComponent(path)}`);
@@ -12,26 +10,18 @@ export async function saveProgress(
     sectionId: string,
     health: number
 ): Promise<void> {
-    const params = new URLSearchParams({
+    await apiPost("/books/progress/save", {
         book: bookPath,
         sectionId: sectionId,
         health: health.toString(),
     });
-
-    const url = `${API_PREFIX}/books/progress/save?${params}`;
-    const res = await fetch(url, {
-        method: "POST",
-    });
-
-    if (!res.ok) {
-        const errorText = await res.text().catch(() => "");
-        throw new Error(`Failed to save progress: ${res.status} ${errorText}`);
-    }
 }
 
 export async function getProgress(bookPath: string): Promise<SavedProgress | null> {
     try {
-        const res = await fetch(`${API_PREFIX}/books/progress/${encodeURIComponent(bookPath)}`);
+        const res = await fetch(
+            `${import.meta.env.VITE_API_PREFIX ?? "/service"}/books/progress/${encodeURIComponent(bookPath)}`
+        );
         if (res.status === 404) {
             // No saved progress found - this is expected, not an error
             return null;

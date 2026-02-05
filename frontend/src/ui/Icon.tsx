@@ -12,7 +12,7 @@ export function Icon({ name, label, className }: IconProps) {
             className={className}
             role={label ? "img" : undefined}
             aria-label={label}
-            aria-hidden={!label}
+            {...(label ? {} : { "aria-hidden": true })}
         >
             {Icons[name]}
         </span>

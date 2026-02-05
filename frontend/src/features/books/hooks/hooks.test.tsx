@@ -50,7 +50,7 @@ describe('useBookFilters', () => {
         const { result } = renderHook(() => useBookFilters(mockBooks));
 
         act(() => {
-            result.current.setSearch('Adventure');
+            result.current.setSearch('Adventure Book');
         });
 
         expect(result.current.filteredBooks).toHaveLength(1);
@@ -83,10 +83,11 @@ describe('useBookFilters', () => {
         const { result } = renderHook(() => useBookFilters(mockBooks));
 
         act(() => {
-            result.current.setSearch('ADVENTURE');
+            result.current.setSearch('ADVENTURE BOOK');
         });
 
         expect(result.current.filteredBooks).toHaveLength(1);
+        expect(result.current.filteredBooks[0].title).toBe('Adventure Book');
     });
 
     it('should filter by active filters', () => {

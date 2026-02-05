@@ -1,8 +1,14 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { BrowserRouter } from 'react-router-dom';
+import type { ReactElement } from 'react';
 import { GameEndScreen } from '../GameEndScreen';
 import type { ProgressInfo } from '../../utils/utils';
+
+const renderWithRouter = (ui: ReactElement) => {
+    return render(<BrowserRouter>{ui}</BrowserRouter>);
+};
 
 describe('GameEndScreen', () => {
     const mockProgress: ProgressInfo = {
@@ -13,7 +19,7 @@ describe('GameEndScreen', () => {
     };
 
     it('should display victory message when won', () => {
-        render(
+        renderWithRouter(
             <GameEndScreen
                 isWon={true}
                 bookTitle="Test Adventure"
@@ -28,7 +34,7 @@ describe('GameEndScreen', () => {
     });
 
     it('should display game over message when lost', () => {
-        render(
+        renderWithRouter(
             <GameEndScreen
                 isWon={false}
                 bookTitle="Test Adventure"
@@ -42,7 +48,7 @@ describe('GameEndScreen', () => {
     });
 
     it('should display progress when provided', () => {
-        render(
+        renderWithRouter(
             <GameEndScreen
                 isWon={true}
                 bookTitle="Test Adventure"
@@ -53,12 +59,13 @@ describe('GameEndScreen', () => {
 
         expect(screen.getByText('Final Progress')).toBeInTheDocument();
         expect(screen.getByText('100%')).toBeInTheDocument();
-        expect(screen.getByText('13')).toBeInTheDocument(); // Section number
-        expect(screen.getByText('13')).toBeInTheDocument(); // Total sections
+        const sectionNumbers = screen.getAllByText('13');
+        expect(sectionNumbers).toHaveLength(2); // Section number and total sections
+        expect(screen.getByRole('status', { name: 'Section 13 of 13' })).toBeInTheDocument();
     });
 
     it('should not display progress when not provided', () => {
-        render(
+        renderWithRouter(
             <GameEndScreen
                 isWon={true}
                 bookTitle="Test Adventure"
@@ -74,7 +81,7 @@ describe('GameEndScreen', () => {
         const handleRestart = vi.fn();
         const user = userEvent.setup();
 
-        render(
+        renderWithRouter(
             <GameEndScreen
                 isWon={false}
                 bookTitle="Test Adventure"
@@ -90,7 +97,7 @@ describe('GameEndScreen', () => {
     });
 
     it('should show "Play Again" button when won', () => {
-        render(
+        renderWithRouter(
             <GameEndScreen
                 isWon={true}
                 bookTitle="Test Adventure"
@@ -103,7 +110,7 @@ describe('GameEndScreen', () => {
     });
 
     it('should show "Restart" button when lost', () => {
-        render(
+        renderWithRouter(
             <GameEndScreen
                 isWon={false}
                 bookTitle="Test Adventure"
@@ -116,7 +123,7 @@ describe('GameEndScreen', () => {
     });
 
     it('should have link to library', () => {
-        render(
+        renderWithRouter(
             <GameEndScreen
                 isWon={true}
                 bookTitle="Test Adventure"
@@ -131,7 +138,7 @@ describe('GameEndScreen', () => {
     });
 
     it('should display victory emoji when won', () => {
-        const { container } = render(
+        const { container } = renderWithRouter(
             <GameEndScreen
                 isWon={true}
                 bookTitle="Test Adventure"
@@ -144,7 +151,7 @@ describe('GameEndScreen', () => {
     });
 
     it('should display game over emoji when lost', () => {
-        const { container } = render(
+        const { container } = renderWithRouter(
             <GameEndScreen
                 isWon={false}
                 bookTitle="Test Adventure"

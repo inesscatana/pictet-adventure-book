@@ -23,7 +23,8 @@ describe('SectionCounter', () => {
 
     it('should handle single section', () => {
         render(<SectionCounter current={1} total={1} />);
-        expect(screen.getByText('1')).toBeInTheDocument();
+        const ones = screen.getAllByText('1');
+        expect(ones).toHaveLength(2); // Current and total both show "1"
         expect(screen.getByRole('status')).toHaveAttribute('aria-label', 'Section 1 of 1');
     });
 

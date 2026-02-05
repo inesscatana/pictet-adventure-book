@@ -21,7 +21,8 @@ describe('HealthChip', () => {
         let chip = container.firstChild as HTMLElement;
         expect(chip).toHaveClass('border-red-300');
         expect(chip).toHaveClass('bg-red-100');
-        expect(chip).toHaveClass('text-red-700');
+        const textSpan = chip.querySelector('span.text-red-700') as HTMLElement;
+        expect(textSpan).toHaveClass('text-red-700');
 
         rerender(<HealthChip hp={0} />);
         chip = container.firstChild as HTMLElement;
@@ -33,7 +34,8 @@ describe('HealthChip', () => {
         let chip = container.firstChild as HTMLElement;
         expect(chip).toHaveClass('border-orange-300');
         expect(chip).toHaveClass('bg-orange-100');
-        expect(chip).toHaveClass('text-orange-700');
+        const textSpan = chip.querySelector('span.text-orange-700') as HTMLElement;
+        expect(textSpan).toHaveClass('text-orange-700');
 
         rerender(<HealthChip hp={60} />);
         chip = container.firstChild as HTMLElement;
@@ -45,7 +47,8 @@ describe('HealthChip', () => {
         let chip = container.firstChild as HTMLElement;
         expect(chip).toHaveClass('border-emerald-300');
         expect(chip).toHaveClass('bg-emerald-100');
-        expect(chip).toHaveClass('text-emerald-700');
+        const textSpan = chip.querySelector('span.text-emerald-700') as HTMLElement;
+        expect(textSpan).toHaveClass('text-emerald-700');
 
         rerender(<HealthChip hp={100} />);
         chip = container.firstChild as HTMLElement;

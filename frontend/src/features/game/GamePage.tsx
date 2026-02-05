@@ -6,6 +6,8 @@ import { GameEndScreen } from "./components/GameEndScreen";
 import { ProgressBar } from "../../ui/ProgressBar";
 import { SectionCounter } from "./components/SectionCounter";
 import { Icon } from "../../ui/Icon";
+import { LoadingState } from "../../ui/LoadingState";
+import { ErrorState } from "../../ui/ErrorState";
 
 export function GamePage() {
     const { path } = useParams();
@@ -45,8 +47,8 @@ export function GamePage() {
 
     if (isLoading || isLoadingProgress) {
         return (
-            <div className="min-h-screen bg-[#fbf7f2] p-10 text-center">
-                Loading...
+            <div className="min-h-screen bg-[#fbf7f2] flex items-center justify-center p-10">
+                <LoadingState message="Loading adventure..." />
             </div>
         );
     }
@@ -55,20 +57,12 @@ export function GamePage() {
         return (
             <div className="min-h-screen bg-[#fbf7f2] flex items-center justify-center px-4">
                 <div className="bg-white p-8 rounded-2xl border border-[#ead8c6] text-center max-w-md shadow-sm">
-                    <h2 className="text-xl font-extrabold text-[#2b1f17]">
-                        Book unavailable
-                    </h2>
-
-                    <p className="mt-2 text-sm text-[#6b5647]">
-                        This book could not be loaded. It may not exist on the server.
-                    </p>
-
-                    <Link
-                        to="/"
-                        className="mt-5 inline-block px-4 py-2 rounded-xl bg-[#b47714] hover:bg-[#9b6510] transition text-white font-semibold text-sm"
-                    >
-                        Back to Library
-                    </Link>
+                    <ErrorState
+                        title="Book unavailable"
+                        message="This book could not be loaded. It may not exist on the server."
+                        actionLabel="Back to Library"
+                        actionHref="/"
+                    />
                 </div>
             </div>
         );
