@@ -7,11 +7,10 @@ import {
     getInitialSectionId,
     getHealthColor,
     getHealthStatus,
-    INITIAL_HEALTH,
     MIN_HEALTH,
     MAX_HEALTH,
 } from './utils';
-import type { Consequence, Section, Book } from './types';
+import type { Consequence, Section, Book } from '../types';
 
 describe('processConsequence', () => {
     it('should decrease health for LOSE_HEALTH', () => {
@@ -180,7 +179,7 @@ describe('getInitialSectionId', () => {
         const book: Book = {
             title: 'Test Book',
             author: 'Test Author',
-            difficulty: 'EASY',
+            difficulty: 'Easy',
             type: 'Adventure',
             sections: [
                 { id: '1', text: 'Section 1', type: 'BEGIN' },
@@ -195,10 +194,10 @@ describe('getInitialSectionId', () => {
         const book: Book = {
             title: 'Test Book',
             author: 'Test Author',
-            difficulty: 'EASY',
+            difficulty: 'Easy',
             type: 'Adventure',
             sections: [
-                { id: 100, text: 'Section 1', type: 'BEGIN' },
+                { id: '100', text: 'Section 1', type: 'BEGIN' },
             ],
         };
         const result = getInitialSectionId(book);
@@ -209,7 +208,7 @@ describe('getInitialSectionId', () => {
         const book: Book = {
             title: 'Test Book',
             author: 'Test Author',
-            difficulty: 'EASY',
+            difficulty: 'Easy',
             type: 'Adventure',
             sections: [],
         };
@@ -222,7 +221,7 @@ describe('calculateProgress', () => {
     const mockBook: Book = {
         title: 'Test Book',
         author: 'Test Author',
-        difficulty: 'EASY',
+        difficulty: 'Easy',
         type: 'Adventure',
         sections: [
             { id: '1', text: 'Section 1', type: 'BEGIN' },
@@ -300,15 +299,15 @@ describe('calculateProgress', () => {
         const bookWithNumericIds: Book = {
             title: 'Test Book',
             author: 'Test Author',
-            difficulty: 'EASY',
+            difficulty: 'Easy',
             type: 'Adventure',
             sections: [
-                { id: 1, text: 'Section 1', type: 'BEGIN' },
-                { id: 2, text: 'Section 2', type: 'NODE' },
+                { id: '1', text: 'Section 1', type: 'BEGIN' },
+                { id: '2', text: 'Section 2', type: 'NODE' },
             ],
         };
         const currentSection: Section = {
-            id: 2,
+            id: '2',
             text: 'Section 2',
             type: 'NODE',
         };

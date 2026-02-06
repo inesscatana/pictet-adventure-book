@@ -18,7 +18,11 @@ export function useBook(path: string) {
     });
 }
 
-export function useGameState(book: Book | undefined, bookPath: string | null, startNew: boolean = false) {
+export function useGameState(
+    book: Book | undefined,
+    bookPath: string | null,
+    startNew: boolean = false
+) {
     const [currentId, setCurrentId] = useState<string | null>(null);
     const [hp, setHp] = useState(INITIAL_HEALTH);
     const [isGameOver, setIsGameOver] = useState(false);
@@ -33,39 +37,53 @@ export function useGameState(book: Book | undefined, bookPath: string | null, st
 
     // Load saved progress when book loads (unless startNew is true)
     useEffect(() => {
-        if (!book || !bookPath) {
-            setIsLoadingProgress(false);
-            return;
-        }
+        let cancelled = false;
 
-        const loadSavedProgress = async () => {
+        const run = async () => {
+            if (!book || !bookPath) {
+                if (!cancelled) setIsLoadingProgress(false);
+                return;
+            }
+
+            // reset flags for this session
+            if (!cancelled) {
+                setIsGameOver(false);
+                setIsGameWon(false);
+                setIsLoadingProgress(true);
+            }
+
             if (startNew) {
-                // Start new game, ignore saved progress
-                initializeFromBeginning(book);
-                setIsLoadingProgress(false);
+                if (!cancelled) {
+                    initializeFromBeginning(book);
+                    setIsLoadingProgress(false);
+                }
                 return;
             }
 
             try {
                 const saved = await getProgress(bookPath);
+                if (cancelled) return;
+
                 if (saved) {
-                    setCurrentId(saved.sectionId);
+                    setCurrentId(String(saved.sectionId));
                     setHp(saved.health);
                 } else {
-                    // No saved progress, start from beginning
                     initializeFromBeginning(book);
                 }
-            } catch (error) {
-                // Unexpected error loading progress, start from beginning
-                initializeFromBeginning(book);
+            } catch {
+                if (!cancelled) {
+                    initializeFromBeginning(book);
+                }
             } finally {
-                setIsLoadingProgress(false);
+                if (!cancelled) setIsLoadingProgress(false);
             }
         };
 
-        loadSavedProgress();
-        setIsGameOver(false);
-        setIsGameWon(false);
+        run();
+
+        return () => {
+            cancelled = true;
+        };
     }, [book, bookPath, startNew, initializeFromBeginning]);
 
     // Get current section
@@ -79,19 +97,20 @@ export function useGameState(book: Book | undefined, bookPath: string | null, st
         return calculateProgress(book, currentId, current);
     }, [book, currentId, current]);
 
-    // Check for win condition (END section)
+    // Game end conditions as effects (side effects live here)
     useEffect(() => {
-        if (current && isEndSection(current)) {
-            setIsGameWon(true);
-        }
+        if (hp <= 0) setIsGameOver(true);
+    }, [hp]);
+
+    useEffect(() => {
+        if (current && isEndSection(current)) setIsGameWon(true);
     }, [current]);
 
-    // Handle option selection
+    // Handle option selection (pure updater for hp)
     const applyOption = useCallback(
         (option: Option) => {
             if (isGameOver || isGameWon) return;
 
-            // Apply health consequence if exists
             const consequence = option.consequence;
             if (consequence) {
                 const type = consequence.type.toUpperCase();
@@ -101,11 +120,6 @@ export function useGameState(book: Book | undefined, bookPath: string | null, st
                 if (isHealthConsequence) {
                     setHp((prev) => {
                         const { newHealth } = processConsequence(consequence, prev);
-
-                        if (newHealth <= 0) {
-                            setIsGameOver(true);
-                        }
-
                         return newHealth;
                     });
                 }
@@ -118,22 +132,13 @@ export function useGameState(book: Book | undefined, bookPath: string | null, st
 
     // Save progress
     const saveGameProgress = useCallback(async () => {
-        if (!book || !currentId || !bookPath) {
-            return;
-        }
-
-        try {
-            await saveProgress(bookPath, currentId, hp);
-        } catch (error) {
-            console.error("Failed to save progress:", error);
-            throw error;
-        }
+        if (!book || !currentId || !bookPath) return;
+        await saveProgress(bookPath, currentId, hp);
     }, [book, currentId, hp, bookPath]);
 
     // Restart game
     const restartGame = useCallback(() => {
         if (!book) return;
-
         setHp(INITIAL_HEALTH);
         setIsGameOver(false);
         setIsGameWon(false);
